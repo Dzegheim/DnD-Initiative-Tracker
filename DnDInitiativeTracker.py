@@ -100,7 +100,7 @@ if len(sys.argv) > 1:
         print(Data)
         #Ask for actions
         Instruction = input ("\nAvailable actions:\n\t[aA] Add - Add someone to the list;\n\t[dD] Damage - Apply damage to someone;\n\t[nN] Next - Go to next turn;\n\t[qQ] Quit - Exit from the tracker;\n\t[rR] Remove - remove someone from the list;\n\t[sS] Save - Save an initiative file;\n\t[tT] Turn - Set a specific turn.\nChoose an action ")
-        if Instruction.lower() in ("a", "d", "l", "n", "q", "r", "s", "t"):
+        if Instruction.lower() in ("a", "d", "n", "q", "r", "s", "t"):
             #Add to initiative
             if Instruction.lower() == "a":
                 Data = AddToInit(Data)
