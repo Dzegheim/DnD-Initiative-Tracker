@@ -26,7 +26,7 @@ def ApplyDamage(Data):
     if ID < len(Data["Name"]):
         print("You selected ", Data["Name"][ID], ", if you chose the wrong character apply 0 damage.", sep="")
         DMG = int(input("How much damage to apply? (Negative values will result in healing) "))
-        Data["HP"][ID] -= DMG
+        Data["HP"][ID] = int(Data["HP"][ID]) - DMG
     return Data
 
 def NextTurn(Data, CurrTurn):
@@ -77,7 +77,7 @@ def SaveToFile(Data):
 print("Welcome to the initiative tracker.")
 if len(sys.argv) > 1:
     if os.path.exists(sys.argv[1]):
-        Data = pd.read_csv(sys.argv[1], sep="\s+|\t", engine = "python", dtype={"Init" : "str"})
+        Data = pd.read_csv(sys.argv[1], sep="\s+|\t", engine = "python", dtype={"Init" : "str", "Name" : "str", "DEX" : "int", "HP": "int"})
         #Check if initiative values start with "+" or "-". If they do roll a die, if they don't keep the value.
         InitArr = np.zeros(len(Data["Init"]), dtype=int)
         for I, Init in enumerate(Data["Init"]):
