@@ -5,8 +5,8 @@
 A short python script for console, used to help manage and track initiative and combat in Dungeons&Dragons, Pathfinder and other similar systems.
 
 # Usage
-This is a console script created with the intent to be used by terminal. The first and only command line argument required is a path to a specifically formatted text document. The document must be formatted in _**FOUR**_ columns (in any order and separated by any combination of tabs and spaces) that _**CAN**_ be called:
-+ **Name** - Names of the entities to be tracked, all in a single word. Examples: *Hero*, *Goblin1*, *Ancient_Red_Dragon*, *LairEffects*.
+This is a console script created with the intent to be used by terminal. The first and only command line argument required is a path to a specifically formatted text document. The document must be formatted in _**FIVE**_ columns (in any order and separated by commas):
++ **Name** - Names of the entities to be tracked. spaces are fine.
 + **Init** - Initiative of the entities. [This is optional, d20 will be rolled with the Mod if left blank, even if blank in csv file]
 + **Mod** - Ability modifier affecting the initiative roll, that will be used to break initiative ties. Should there be a tie of both modifier and intiaitve, no further decision is made by the program.
 + **HP** - Hitpoints of the characters. Useful to track combat.
