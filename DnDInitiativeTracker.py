@@ -31,18 +31,22 @@ def AddToInit(Data):
         return Data
 
 def ApplyDamage(Data):
-    ID = int(input('Who do you wish to apply damage to? (Insert ID from the tracker list, invalid choice will result in return to action selection) '))
-    if ID < len(Data['Name']):
-        print('You selected ', Data['Name'][ID], ', if you chose the wrong character apply 0 damage.', sep='')
-        DMG = int(input('How much damage to apply? (Negative values will result in healing) '))
-        Data['HP'][ID] = int(Data['HP'][ID]) - DMG
+    inp = input('Who do you wish to apply damage to? (Insert ID from the tracker list, invalid choice will result in return to action selection) ')
+    if inp.isnumeric():
+		ID = int(inp)
+		if ID < len(Data['Name']):
+			print('You selected ', Data['Name'][ID], ', if you chose the wrong character apply 0 damage.', sep='')
+			DMG = int(input('How much damage to apply? (Negative values will result in healing) '))
+			Data['HP'][ID] = int(Data['HP'][ID]) - DMG
     return Data
 
 def ApplyCondition(Data):
-    ID = int(input('Who do you wish to apply a condition to? (Insert ID from the tracker list, invalid choice will result in return to action selection) '))
-    if ID < len(Data['Name']):
-        print('You selected ', Data['Name'][ID], ', if you chose the wrong character apply no condition.', sep='')
-        Data['Conditions'][ID] = rlinput('Alter the Conditions to: ', prefill = Data['Conditions'][ID])
+    inp = input('Who do you wish to apply a condition to? (Insert ID from the tracker list, invalid choice will result in return to action selection) ')
+    if inp.isnumeric():
+		ID = int()
+		if ID < len(Data['Name']):
+			print('You selected ', Data['Name'][ID], ', if you chose the wrong character apply no condition.', sep='')
+			Data['Conditions'][ID] = rlinput('Alter the Conditions to: ', prefill = Data['Conditions'][ID])
     return Data
 
 def NextTurn(Data, CurrTurn):
@@ -53,32 +57,38 @@ def NextTurn(Data, CurrTurn):
     return Data, CurrTurn
 
 def SetTurn(Data, CurrTurn):
-    NewTurn = int(input('Insert new turn ID '))
-    if NewTurn < len(Data['Turn']):
-        for ind in Data.index:
-            Data['Turn'][ind] = ' '
-        Data['Turn'][NewTurn] = '==>'
-        CurrTurn = NewTurn
-    else:
-        input('Invalid selection, please retry. Hit any key to proceed. ')
-    return Data, CurrTurn
+	inp = input('Insert new turn ID ')
+	if inp.isnumeric():
+		NewTurn = int(inp)
+		if NewTurn < len(Data['Turn']):
+			for ind in Data.index:
+				Data['Turn'][ind] = ' '
+			Data['Turn'][NewTurn] = '==>'
+			CurrTurn = NewTurn
+		else:
+			input('Invalid selection, please retry. Hit any key to proceed. ')
+	else:
+		input('Type an Integer. Hit any key to proceed. ')
+	return Data, CurrTurn
 
 def RemoveFromInit(Data, CurrTurn):
-    ID = int(input('Who do you wish to remove? (Insert ID from the tracker list, invalid choice will result in return to action selection) '))
-    if ID < len(Data['Name']):
-        print('You selected ', Data['Name'][ID], ', do you really wish to remove them? [yN]', sep='', end=' ')
-        YN = input()
-        if YN.lower() in ('yes', 'true', 't', 'y', '1'):
-            Data = Data.drop(ID)
-            Data = Data.reset_index(drop=True)
-            if ID < CurrTurn:
-                CurrTurn = CurrTurn-1
-            elif ID == CurrTurn:
-                if CurrTurn < len(Data['Turn'])-1:
-                    Data['Turn'][ID] = '==>'
-                else:
-                    CurrTurn = 0
-                    Data['Turn'][0] = '==>'
+    inp = input('Who do you wish to remove? (Insert ID from the tracker list, invalid choice will result in return to action selection) ')
+    if inp.isnumeric():
+		ID = int()
+		if ID < len(Data['Name']):
+			print('You selected ', Data['Name'][ID], ', do you really wish to remove them? [yN]', sep='', end=' ')
+			YN = input()
+			if YN.lower() in ('yes', 'true', 't', 'y', '1'):
+				Data = Data.drop(ID)
+				Data = Data.reset_index(drop=True)
+				if ID < CurrTurn:
+					CurrTurn = CurrTurn-1
+				elif ID == CurrTurn:
+					if CurrTurn < len(Data['Turn'])-1:
+						Data['Turn'][ID] = '==>'
+					else:
+						CurrTurn = 0
+						Data['Turn'][0] = '==>'
     return Data, CurrTurn
 
 def SaveToFile(Data):
