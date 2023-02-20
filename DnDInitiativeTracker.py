@@ -2,132 +2,164 @@ import random
 import sys
 import os
 import pandas as pd
-import numpy as np
+import readline
+
+def rlinput(prompt, prefill=''):
+   readline.set_startup_hook(lambda: readline.insert_text(prefill))
+   try:
+      return input(prompt)
+   finally:
+      readline.set_startup_hook()
 
 def InitSort(Data):
-    return Data.sort_values(["Init", "DEX"], ascending = [False, False], ignore_index = True)
+    Data = Data.sort_values(by=['Init', 'Mod'], ascending = [False, False], ignore_index = True)
+    return Data
 
 def AddToInit(Data):
-    Name = input("Name: ")
-    Init = input("Init: ")
-    Init = (random.randint(1,20)+int(Init)) if (Init.startswith("+") or Init.startswith("-")) else int(Init)
-    DEX = input("DEX: ")
-    HP = input("HP: ")
-    print("Do you want to add the following entity to the initiative list? [yN]\n\tName: ", Name, "\n\tInit: ", Init, "\n\tDEX: ", DEX, "\n\tHP: ", HP, sep="")
+    Name = input('Name: ')
+    Init = input('Init (leave blank to generate from Mod): ')
+    Mod = input('Mod: ')
+    Init = (random.randint(1,20)+int(Mod)) if (Init == '') else int(Init)
+    HP = input('HP: ')
+    Conditions = input('Conditions: ')
+    print('Do you want to add the following entity to the initiative list? [yN]\n\tName: ', Name, '\n\tInit: ', Init, '\n\tMod: ', Mod, '\n\tHP: ', HP, '\n\tConditions: ', Conditions, sep='')
     YN = input()
-    if YN.lower() in ("yes", "true", "t", "y", "1"):
-        Data = Data.append({"Turn": " ", "Name": Name, "Init": Init, "DEX": DEX, "HP": HP}, ignore_index=True)
+    if YN.lower() in ('yes', 'true', 't', 'y', '1'):
+        Data = Data.append({'Turn': ' ', 'Name': Name, 'Init': Init, 'Mod': Mod, 'HP': HP, 'Conditions': Conditions}, ignore_index=True)
         return InitSort(Data)
     else:
         return Data
 
 def ApplyDamage(Data):
-    ID = int(input("Who do you wish to apply damage to? (Insert ID from the tracker list, invalid choice will result in return to action selection) "))
-    if ID < len(Data["Name"]):
-        print("You selected ", Data["Name"][ID], ", if you chose the wrong character apply 0 damage.", sep="")
-        DMG = int(input("How much damage to apply? (Negative values will result in healing) "))
-        Data["HP"][ID] = int(Data["HP"][ID]) - DMG
+    inp = input('Who do you wish to apply damage to? (Insert ID from the tracker list, invalid choice will result in return to action selection) ')
+    if inp.isnumeric():
+        ID = int(inp)
+        if ID < len(Data['Name']):
+            print('You selected ', Data['Name'][ID], ', if you chose the wrong character apply 0 damage.', sep='')
+            DMG = int(input('How much damage to apply? (Negative values will result in healing) '))
+            Data['HP'][ID] = int(Data['HP'][ID]) - DMG
+    return Data
+
+def ApplyCondition(Data):
+    inp = input('Who do you wish to apply a condition to? (Insert ID from the tracker list, invalid choice will result in return to action selection) ')
+    if inp.isnumeric():
+        ID = int()
+        if ID < len(Data['Name']):
+            print('You selected ', Data['Name'][ID], ', if you chose the wrong character apply no condition.', sep='')
+            Data['Conditions'][ID] = rlinput('Alter the Conditions to: ', prefill = Data['Conditions'][ID])
     return Data
 
 def NextTurn(Data, CurrTurn):
-    Data["Turn"][CurrTurn] = " "
-    CurrTurn = CurrTurn+1 if CurrTurn+1 < len(Data["Name"]) else 0
-    Data["Turn"][CurrTurn] = "==>"
+    for ind in Data.index:
+        Data['Turn'][ind] = ' '
+    CurrTurn = CurrTurn+1 if CurrTurn+1 < len(Data['Name']) else 0
+    Data['Turn'][CurrTurn] = '==>'
     return Data, CurrTurn
 
 def SetTurn(Data, CurrTurn):
-    NewTurn = int(input("Insert new turn ID "))
-    if NewTurn < len(Data["Turn"]):
-        Data["Turn"][CurrTurn] = " "
-        Data["Turn"][NewTurn] = "==>"
-        CurrTurn = NewTurn
+    inp = input('Insert new turn ID ')
+    if inp.isnumeric():
+        NewTurn = int(inp)
+        if NewTurn < len(Data['Turn']):
+            for ind in Data.index:
+                Data['Turn'][ind] = ' '
+            Data['Turn'][NewTurn] = '==>'
+            CurrTurn = NewTurn
+        else:
+            input('Invalid selection, please retry. Hit any key to proceed. ')
     else:
-        input("Invalid selection, please retry. Hit any key to proceed. ")
+        input('Type an Integer. Hit any key to proceed. ')
     return Data, CurrTurn
 
 def RemoveFromInit(Data, CurrTurn):
-    ID = int(input("Who do you wish to remove? (Insert ID from the tracker list, invalid choice will result in return to action selection) "))
-    if ID < len(Data["Name"]):
-        print("You selected ", Data["Name"][ID], ", do you really wish to remove them? [yN]", sep="", end=" ")
-        YN = input()
-        if YN.lower() in ("yes", "true", "t", "y", "1"):
-            Data = Data.drop(ID)
-            Data = Data.reset_index(drop=True)
-            if ID < CurrTurn:
-                CurrTurn = CurrTurn-1
-            elif ID == CurrTurn:
-                if CurrTurn < len(Data["Turn"])-1:
-                    Data["Turn"][ID] = "==>"
-                else:
-                    CurrTurn = 0
-                    Data["Turn"][0] = "==>"
+    inp = input('Who do you wish to remove? (Insert ID from the tracker list, invalid choice will result in return to action selection) ')
+    if inp.isnumeric():
+        ID = int()
+        if ID < len(Data['Name']):
+            print('You selected ', Data['Name'][ID], ', do you really wish to remove them? [yN]', sep='', end=' ')
+            YN = input()
+            if YN.lower() in ('yes', 'true', 't', 'y', '1'):
+                Data = Data.drop(ID)
+                Data = Data.reset_index(drop=True)
+                if ID < CurrTurn:
+                    CurrTurn = CurrTurn-1
+                elif ID == CurrTurn:
+                    if CurrTurn < len(Data['Turn'])-1:
+                        Data['Turn'][ID] = '==>'
+                    else:
+                        CurrTurn = 0
+                        Data['Turn'][0] = '==>'
     return Data, CurrTurn
 
 def SaveToFile(Data):
-    Outname = input("File name to save? (Will be saved in current path, and WILL overwrite already existing files) ")
-    if Outname is None or Outname == "":
-        Outname = "Initiatives.txt"
-    with open("./"+Outname, 'w') as F:
-        Output = Data.drop("Turn", 1).to_string(header=True, index=False)
-        F.write(Output)
-        F.write("\n")
-        F.close()
-    input("Operation completed. Hit any key to proceed. ")
+    Outname = input('File name to save? (Will be saved in current path, and WILL overwrite already existing files) ')
+    if Outname is None or Outname == '':
+        Outname = 'Initiatives.csv'
+    Data.drop('Turn', axis= 'columns').to_csv(Outname, header=True, index=False)
+    input('Operation completed. Hit any key to proceed. ')
 
-print("Welcome to the initiative tracker.")
-if len(sys.argv) > 1:
-    if os.path.exists(sys.argv[1]):
-        Data = pd.read_csv(sys.argv[1], sep="\s+|\t", engine = "python", dtype={"Init" : "str", "Name" : "str", "DEX" : "int", "HP": "int"})
-        #Check if initiative values start with "+" or "-". If they do roll a die, if they don't keep the value.
-        InitArr = np.zeros(len(Data["Init"]), dtype=int)
-        for I, Init in enumerate(Data["Init"]):
-            InitArr[I] = (random.randint(1,20)+int(Init)) if (Init.startswith("+") or Init.startswith("-")) else int(Init)
-        #Replace negative values with 1
-        for I, Init in enumerate(InitArr):
-            if Init <= 0:
-                InitArr[I] = 1
-        Data["Init"] = InitArr
-        Data = Data.assign(Turn = [" "]*len(Data["Name"]))
-        Data = Data.reindex(columns = ["Turn", "Name", "Init", "DEX", "HP"])
-        #Sort the results and set initial turn
-        Data = InitSort(Data)
+if __name__ == '__main__':
+    if len(sys.argv) <= 1:
+        Data = pd.DataFrame(columns=['Turn', 'Name', 'Init', 'Mod', 'HP', 'Conditions'])
+        Data = AddToInit(Data)
+        print(Data)
         CurrTurn = 0
-        Data["Turn"][0] = "==>"
+        Data['Turn'][0] = '==>'
+    elif len(sys.argv) == 2:
+        if os.path.exists(sys.argv[1]):
+            Data = pd.read_csv(sys.argv[1], sep=',', dtype=str)
+            
+            for ind in Data.index:
+                Data.at[ind,'Mod'] = int(Data.at[ind,'Mod'])
+                Data.at[ind,'HP'] = int(Data.at[ind,'HP'])
+                if (str(Data.at[ind,'Init']) == 'nan'): #I can't be arsed figuring out what a NaN is in non-numpy python right now.
+                    Data.at[ind,'Init'] = (random.randint(1,20)+int(Data.loc[ind,'Mod']))
+                Data.at[ind,'Init'] = int(Data.at[ind,'Init'])
+            #Replace negative values with 1
+            Data = Data.assign(Turn = [' ']*len(Data['Name']))
+            Data = Data.reindex(columns = ['Turn', 'Name', 'Init', 'Mod', 'HP', 'Conditions'])
+            #Sort the results and set initial turn
+            Data = InitSort(Data)
+            CurrTurn = 0
+            Data['Turn'][0] = '==>'
+        else:
+            print('Check input filename.')
     while True:
         #Clear window
         os.system('cls' if os.name=='nt' else 'clear')
         #Print initiatives
         print(Data)
         #Ask for actions
-        Instruction = input ("\nAvailable actions:\n\t[aA] Add - Add someone to the list;\n\t[dD] Damage - Apply damage to someone;\n\t[nN] Next - Go to next turn;\n\t[qQ] Quit - Exit from the tracker;\n\t[rR] Remove - remove someone from the list;\n\t[sS] Save - Save an initiative file;\n\t[tT] Turn - Set a specific turn.\nChoose an action ")
-        if Instruction.lower() in ("a", "d", "n", "q", "r", "s", "t"):
+        Instruction = input ('\nAvailable actions:\n\t[aA] Add - Add someone to the list;\n\t[rR] Remove - remove someone from the list;\n\t[dD] Damage - Apply damage to someone;\n\t[cC] Condition - Apply a condition to someone;\n\t[nN] Next - Go to next turn;\n\t[tT] Turn - Set a specific turn;\n\t[sS] Save - Save an initiative file;\n\t[qQ] Quit - Exit from the tracker.\nChoose an action ')
+        if Instruction.lower() in ('a', 'd', 'c', 'n', 'q', 'r', 's', 't'):
             #Add to initiative
-            if Instruction.lower() == "a":
+            if Instruction.lower() == 'a':
                 Data = AddToInit(Data)
+            #Remove from list
+            elif Instruction.lower() == 'r':
+                Data, CurrTurn = RemoveFromInit(Data, CurrTurn)
             #Apply damage
-            if Instruction.lower() == "d":
+            elif Instruction.lower() == 'd':
                 Data = ApplyDamage(Data)
+            #Apply Condition
+            elif Instruction.lower() == 'c':
+                Data = ApplyCondition(Data)
             #Next turn
-            if Instruction.lower() == "n":
+            elif Instruction.lower() == 'n':
                 Data, CurrTurn = NextTurn(Data, CurrTurn)
+            #Set a specific turn
+            elif Instruction.lower() == 't':
+                Data, CurrTurn = SetTurn(Data, CurrTurn)
+            #Save a file
+            elif Instruction.lower() == 's':
+                SaveToFile(Data)
             #Quit
-            if Instruction.lower() == "q":
-                YN = input("Are you sure you want to quit? [yN] ")
-                if YN.lower() in ("yes", "true", "t", "y", "1"):
+            elif Instruction.lower() == 'q':
+                YN = input('Are you sure you want to quit? [yN] ')
+                if YN.lower() in ('yes', 'true', 't', 'y', '1'):
                     break
                 else:
                     continue
-            #Remove from list
-            if Instruction.lower() == "r":
-                Data, CurrTurn = RemoveFromInit(Data, CurrTurn)
-            #Save a file
-            if Instruction.lower() == "s":
-                SaveToFile(Data)
-            #Set a specific turn
-            if Instruction.lower() == "t":
-                Data, CurrTurn = SetTurn(Data, CurrTurn)
         else:
-            input("Invalid selection, retry. Hit any key to proceed. ")
+            input('Invalid selection, retry. Hit any key to proceed. ')
             continue
-else:
-    print("No file provided.")

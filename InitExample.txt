@@ -1,9 +1,0 @@
-      Name    Init  DEX   HP
-      Hero1     12   18   73
-      Hero2     16    9   62
-      Hero3     16   12   49
-      Hero4      9   15  132
-     Goblin     +2   16    8
-    Bugbear     +4   14   32
-   LichKing     -3    8  688
-LairActions      1    1    0
