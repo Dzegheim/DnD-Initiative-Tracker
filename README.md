@@ -12,7 +12,7 @@ This is a console script created with the intent to be used by terminal. The fir
 + **HP** - Hitpoints of the characters. Useful to track combat.
 + **Conditions** - List of conditions of initiative member. Useful to track combat.
 
-An example of a valid document can be found in the repository under the name `InitExample.txt`. To start the script simply pass the full path of the file as the first argument, one such example may be `python /path/to/script/DnDInitiativeTracker.py path/to/file/InitExample.txt`.
+An example of a valid document can be found in the repository under the name `InitExample.csv`. To start the script simply pass the full path of the file as the first argument, one such example may be `python /path/to/script/DnDInitiativeTracker.py path/to/file/InitExample.csv`.
 After reading the initiatives and rolling the necessary ones, the list will be sorted and the program will print it with an arrow showing the current turn, and prompt the user to choose actions to perform. These available actions are:
 + **Add** - Add another entity to the list. The program will prompt to insert a name, an initiative score or modifier, a dexterity score and an HP score. Before adding the entity, the program will prompt for confirmation.
 + **Damage** - Apply damage to someone. The program will prompt to select an entity via their turn order ID (note that it counts from 0), and then insert an amount of damage. If the user wishes to heal the entity instead, they can insert a negative score. Example: after selecting ID 8, the user types 6, dealing 6 damage to the entity with ID 8. If the user instead types -6, the entity will be healed by 6 HP.
