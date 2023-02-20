@@ -5,16 +5,18 @@
 A short python script for console, used to help manage and track initiative and combat in Dungeons&Dragons.
 
 # Usage
-This is a console script created with the intent to be used by terminal. The first and only command line argument required is a path to a specifically formatted text document. The document must be formatted in _**FOUR**_ columns (in any order and separated by any combination of tabs and spaces) that _**MUST**_ be called:
+This is a console script created with the intent to be used by terminal. The first and only command line argument required is a path to a specifically formatted text document. The document must be formatted in _**FOUR**_ columns (in any order and separated by any combination of tabs and spaces) that _**CAN**_ be called:
 + **Name** - Names of the entities to be tracked, all in a single word. Examples: *Hero*, *Goblin1*, *Ancient_Red_Dragon*, *LairEffects*.
-+ **Init** - Initiative of the entities. If it is a number (without any sign preceeding it) it will be treated as a number. If it is a modifier (such as *+4* or *-3*), the code will roll a d20 and apply the modifies, obtaining a valid initiative score.
-+ **DEX** - Dexterity **score** (not the modifier), that will be used to break initiative ties. Should there be a tie of both dexterity and intiaitve, no further decision is made by the program.
++ **Init** - Initiative of the entities. If it is a number (without any sign preceeding it) it will be treated as a number. If it is a modifier (such as *+4* or *-3*), the code will roll a d20 and apply the modifies, obtaining a valid initiative score. [This is optional, will be rolled with the Mod if left blank]
++ **Mod** - Dexterity **score** (not the modifier), that will be used to break initiative ties. Should there be a tie of both dexterity and intiaitve, no further decision is made by the program.
 + **HP** - Hitpoints of the characters. Useful to track combat.
++ **Conditions** - List of conditions of initiative member. Useful to track combat.
 
 An example of a valid document can be found in the repository under the name `InitExample.txt`. To start the script simply pass the full path of the file as the first argument, one such example may be `python /path/to/script/DnDInitiativeTracker.py path/to/file/InitExample.txt`.
 After reading the initiatives and rolling the necessary ones, the list will be sorted and the program will print it with an arrow showing the current turn, and prompt the user to choose actions to perform. These available actions are:
 + **Add** - Add another entity to the list. The program will prompt to insert a name, an initiative score or modifier, a dexterity score and an HP score. Before adding the entity, the program will prompt for confirmation.
 + **Damage** - Apply damage to someone. The program will prompt to select an entity via their turn order ID (note that it counts from 0), and then insert an amount of damage. If the user wishes to heal the entity instead, they can insert a negative score. Example: after selecting ID 8, the user types 6, dealing 6 damage to the entity with ID 8. If the user instead types -6, the entity will be healed by 6 HP.
++ **Conditon** - Edit the text string for the condtions imposed on initiatie member.
 + **Next** - Go to next turn. This will make the arrow indicating the turn advance by one.
 + **Quit** - Exit from the tracker. If the user confirms, the program quits. **No data is saved.**
 + **Remove** - Remove someone from the list. The program prompts to select the ID of an entity, and then ask for confirmation. If the user confirms, the entity is removed from the turn order.
