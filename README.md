@@ -2,7 +2,7 @@
 ### Scroll down for Italian version
 
 # D&D Initiative Tracker
-A short python script for console, used to help manage and track initiative and combat in Dungeons&Dragons.
+A short python script for console, used to help manage and track initiative and combat in Dungeons&Dragons, Pathfinder and other similar systems.
 
 # Usage
 This is a console script created with the intent to be used by terminal. The first and only command line argument required is a path to a specifically formatted text document. The document must be formatted in _**FOUR**_ columns (in any order and separated by any combination of tabs and spaces) that _**CAN**_ be called:
